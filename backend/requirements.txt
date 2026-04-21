@@ -1,0 +1,9 @@
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+python-multipart==0.0.9
+lxml==5.2.2
+erpbrasil.edoc.pdf==1.2.1
+pypdf==4.2.0
+reportlab==4.2.0
+nfelib==2.0.1
+slowapi==0.1.9

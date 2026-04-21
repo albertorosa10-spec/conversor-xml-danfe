@@ -1,0 +1,104 @@
+Metadata-Version: 2.1
+Name: erpbrasil.edoc.pdf
+Version: 1.2.1
+Summary: Impressão de documentos fiscais a partir do XML: NF-E, NFC-E, CT-E, MDF-E, GNRE e etc.
+Home-page: https://github.com/erpbrasil/erpbrasil.edoc.pdf
+Author: KMEE
+Author-email: dev@kmee.com.br
+License: MIT
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: Unix
+Classifier: Operating System :: POSIX
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Classifier: Topic :: Utilities
+Requires-Python: >=3.5, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*
+License-File: LICENSE
+License-File: AUTHORS.rst
+Requires-Dist: click
+Requires-Dist: erpbrasil.base
+Requires-Dist: genshi
+Requires-Dist: lxml
+Requires-Dist: py3o.template
+Requires-Dist: python-dateutil
+Requires-Dist: pytz
+Requires-Dist: reportlab >=3.5
+Requires-Dist: sh
+
+========
+Overview
+========
+
+
+
+Impressão de documentos fiscais a partir do XML: NF-E, NFC-E, CT-E, MDF-E, GNRE e etc.
+
+* Free software: MIT license
+
+Installation
+============
+
+::
+
+    pip install erpbrasil.edoc.pdf
+
+You can also install the in-development version with::
+
+    pip install https://github.com/erpbrasil/erpbrasil.edoc.pdf/archive/master.zip
+
+
+Documentation
+=============
+
+https://erpbrasil.github.io/docs/
+
+Development
+===========
+
+To run the all tests run::
+
+    tox
+
+Note, to combine the coverage data from all the tox environments run:
+
+.. list-table::
+    :widths: 10 90
+    :stub-columns: 1
+
+    - - Windows
+      - ::
+
+            set PYTEST_ADDOPTS=--cov-append
+            tox
+
+    - - Other
+      - ::
+
+            PYTEST_ADDOPTS=--cov-append tox
+
+
+Changelog
+=========
+
+0.0.0 (2020-02-20)
+------------------
+
+* First release on PyPI.
+
+
+1.0.0 (2021-05-05)
+------------------
+
+* Correção dos imports da biblioteca;
+* NF-e Danfe c/ Volumes;
+
+

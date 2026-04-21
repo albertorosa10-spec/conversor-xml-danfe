@@ -1,0 +1,113 @@
+"""
+pdf_builder.py
+Renderização de PDFs DANFE (NF-e) e DACTe (CT-e).
+
+Estratégia:
+  1. Tentativa primária: erpbrasil.edoc.pdf (renderização fiel ao padrão SEFAZ)
+  2. Fallback: reportlab (PDF simples com dados extraídos quando o erpbrasil falha)
+
+O fallback cobre XMLs parciais (sem autorização SEFAZ) e renderiza
+com marca d'água "SEM AUTORIZAÇÃO" quando tem_protocolo=False.
+"""
+
+import io
+from typing import Optional
+
+from utils.xml_parser import DocumentoFiscal
+
+
+def gerar_pdf(doc: DocumentoFiscal) -> Optional[bytes]:
+    """
+    Tenta renderizar o PDF via erpbrasil. Em falha, usa reportlab.
+    Retorna bytes do PDF ou None se ambas as tentativas falharem.
+    Nunca lança exceção.
+    """
+    # Tentativa 1: erpbrasil (renderizador primário — fiel ao layout SEFAZ)
+    pdf = _tentar_erpbrasil(doc)
+    if pdf:
+        return pdf
+
+    # Tentativa 2: reportlab (fallback — dados textuais simples)
+    return _gerar_pdf_fallback(doc)
+
+
+def _tentar_erpbrasil(doc: DocumentoFiscal) -> Optional[bytes]:
+    try:
+        if doc.tipo == "NF-e":
+            from erpbrasil.edoc.pdf import danfe as danfe_lib
+            pdf = danfe_lib.danfe(doc.xml_bytes)
+        else:
+            from erpbrasil.edoc.pdf import dacte as dacte_lib
+            pdf = dacte_lib.dacte(doc.xml_bytes)
+        return pdf.output()
+    except Exception:
+        return None
+
+
+def _gerar_pdf_fallback(doc: DocumentoFiscal) -> Optional[bytes]:
+    """
+    PDF simples via reportlab. Usado quando o erpbrasil não consegue renderizar
+    (XML sem protocolo, estrutura parcial, etc.).
+    Inclui marca d'água "SEM AUTORIZAÇÃO" quando tem_protocolo=False.
+    """
+    try:
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib.units import cm
+        from reportlab.pdfgen import canvas
+
+        buf = io.BytesIO()
+        c = canvas.Canvas(buf, pagesize=A4)
+        largura, altura = A4
+
+        # Cabeçalho
+        c.setFont("Helvetica-Bold", 14)
+        c.drawString(2 * cm, altura - 2 * cm, f"DANFE — {doc.tipo}")
+        c.setFont("Helvetica", 9)
+        c.drawString(2 * cm, altura - 2.6 * cm, "(Gerado por fallback — layout simplificado)")
+
+        # Linha separadora
+        c.setStrokeColorRGB(0.7, 0.7, 0.7)
+        c.line(2 * cm, altura - 3 * cm, largura - 2 * cm, altura - 3 * cm)
+
+        # Dados extraídos
+        c.setFont("Helvetica", 10)
+        y = altura - 3.8 * cm
+        linha_altura = 0.65 * cm
+
+        campos = [
+            ("Chave de acesso", doc.chave or "Não disponível"),
+            ("Número", doc.numero or "N/D"),
+            ("Série", doc.serie or "N/D"),
+            ("Data de emissão", doc.data_emissao or "N/D"),
+            ("Emitente", doc.emitente_nome or "N/D"),
+            ("CNPJ Emitente", doc.emitente_cnpj or "N/D"),
+            ("UF Emitente", doc.emitente_uf or "N/D"),
+            ("Destinatário", doc.destinatario_nome or "N/D"),
+            ("CNPJ/CPF Dest.", doc.destinatario_cnpj or "N/D"),
+            ("UF Destinatário", doc.destinatario_uf or "N/D"),
+            ("Valor total", f"R$ {doc.valor_total}" if doc.valor_total else "N/D"),
+        ]
+
+        for label, valor in campos:
+            c.setFont("Helvetica-Bold", 9)
+            c.drawString(2 * cm, y, f"{label}:")
+            c.setFont("Helvetica", 9)
+            c.drawString(7 * cm, y, str(valor))
+            y -= linha_altura
+
+        # Marca d'água para documentos sem autorização SEFAZ
+        if not doc.tem_protocolo:
+            c.saveState()
+            c.setFont("Helvetica-Bold", 36)
+            c.setFillColorRGB(0.85, 0.1, 0.1)
+            c.setFillAlpha(0.25)
+            c.translate(largura / 2, altura / 2)
+            c.rotate(45)
+            c.drawCentredString(0, 0, "SEM AUTORIZAÇÃO SEFAZ")
+            c.restoreState()
+
+        c.save()
+        return buf.getvalue()
+
+    except Exception:
+        return None
