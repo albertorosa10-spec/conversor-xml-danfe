@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nfeProc versao="3.10" xmlns="http://www.portalfiscal.inf.br/nfe">
+  <NFe xmlns="http://www.portalfiscal.inf.br/nfe">
+    <infNFe versao="3.10" Id="NFe35201012345678000195550010000000011234567890">
+      <ide><nNF>001</nNF><serie>001</serie><dhEmi>2020-10-01T10:00:00-03:00</dhEmi></ide>
+      <emit>
+        <CNPJ>12345678000195</CNPJ><xNome>EMPRESA VERSAO ANTIGA</xNome>
+        <enderEmit><UF>SP</UF></enderEmit>
+      </emit>
+      <dest>
+        <CNPJ>98765432000196</CNPJ><xNome>DESTINATARIO</xNome>
+        <enderDest><UF>RJ</UF></enderDest>
+      </dest>
+      <total><ICMSTot><vNF>500.00</vNF></ICMSTot></total>
+    </infNFe>
+  </NFe>
+</nfeProc>
