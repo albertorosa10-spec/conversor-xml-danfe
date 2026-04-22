@@ -2,9 +2,12 @@ FROM python:3.11-slim
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
     libxml2-dev \
     libxslt1-dev \
     libjpeg-dev \
+    libfreetype6-dev \
     libcairo2-dev \
     pkg-config \
     locales \
@@ -16,7 +19,7 @@ ENV LANG=pt_BR.UTF-8
 ENV LC_ALL=pt_BR.UTF-8
 
 COPY backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --force-reinstall -r requirements.txt
 
 # Copia e executa o patch ANTES de copiar o restante do backend
 COPY patch_erpbrasil.py .
