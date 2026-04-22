@@ -5,6 +5,8 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libxslt1-dev \
     libjpeg-dev \
+    libcairo2-dev \
+    pkg-config \
     locales \
     && sed -i '/pt_BR.UTF-8/s/^# //g' /etc/locale.gen \
     && locale-gen \

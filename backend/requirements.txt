@@ -7,3 +7,4 @@ pypdf==4.2.0
 reportlab==4.2.0
 nfelib==2.0.1
 slowapi==0.1.9
+rlPyCairo>=0.2.0
