@@ -33,13 +33,8 @@ def gerar_pdf(doc: DocumentoFiscal) -> Optional[bytes]:
 
 def _tentar_erpbrasil(doc: DocumentoFiscal) -> Optional[bytes]:
     try:
-        if doc.tipo == "NF-e":
-            from erpbrasil.edoc.pdf import danfe as danfe_lib
-            pdf = danfe_lib.danfe(doc.xml_bytes)
-        else:
-            from erpbrasil.edoc.pdf import dacte as dacte_lib
-            pdf = dacte_lib.dacte(doc.xml_bytes)
-        return pdf.output()
+        from erpbrasil.edoc.pdf import ImprimirXml
+        return ImprimirXml.imprimir(doc.xml_bytes)
     except Exception:
         return None
 
