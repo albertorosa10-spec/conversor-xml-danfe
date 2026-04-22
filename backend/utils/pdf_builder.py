@@ -1,4 +1,4 @@
-﻿"""
+"""
 pdf_builder.py
 RenderizaÃ§Ã£o de PDFs DANFE (NF-e) e DACTe (CT-e).
 
@@ -35,7 +35,10 @@ def _tentar_erpbrasil(doc: DocumentoFiscal) -> Optional[bytes]:
     try:
         from erpbrasil.edoc.pdf import ImprimirXml
         return ImprimirXml.imprimir(doc.xml_bytes)
-    except Exception:
+    except Exception as e:
+        import traceback, logging
+        logging.error(f"[ERPBRASIL] ERRO: {type(e).__name__}: {e}")
+        logging.error(traceback.format_exc())
         return None
 
 
